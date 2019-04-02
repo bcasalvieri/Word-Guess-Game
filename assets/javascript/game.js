@@ -50,9 +50,9 @@ $(document).ready(function() {
   var $wins = $("#wins");
   var $losses = $("#losses");
   var $placeholders = $("#placeholders");
-  var $guessesLeft = $("#guessesLeft");
-  var $lettersGuessed = $("#lettersGuessed");
-  var $newGameBtn = $("#newGame");
+  var $guessesLeft = $("#guesses-left");
+  var $lettersGuessed = $("#letters-guessed");
+  var $newGameBtn = $("#new-game");
 
   function newGame() {
     // Reset all game variables
@@ -90,7 +90,7 @@ $(document).ready(function() {
 
     // Add guessed letter to lettersGuessed bank
     lettersGuessed.push(letter);
-    $lettersGuessed.text(letterGuessed.join(", "));
+    $lettersGuessed.text(lettersGuessed.join(", "));
 
     // Check to see if letter pressed is in the picked word. If yes, replace placeholder with correct letter
     for (var i = 0; i < pickedWord.length; i++) {
@@ -129,10 +129,9 @@ $(document).ready(function() {
     if (event.which >= 65 && event.which <= 90 && gameRunning) {
       letterGuessed(event.key);
     }
-
     else {
       alert(`You didn't press a letter.`);
-    };
+    }
   };
 
   $newGameBtn.on("click", newGame);
