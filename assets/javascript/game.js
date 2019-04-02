@@ -34,7 +34,7 @@ $(document).ready(function() {
     "Auburn Tigers",
     "Pittsburgh Panthers",
     "Kansas Jayhawks",
-    "Colorado Buffaloes"
+    "Colorado Buffaloes",
     "North Carolina State Wolfpack",
     "South Carolina Gamecocks"
   ];
@@ -44,6 +44,7 @@ $(document).ready(function() {
   var pickedWordPlaceholders = [];
   var guessesLeft = 10;
   var lettersGuessed = [];
+  var gameRunning = false;
 
   // Create variables to hold HTML references
   var $wins = $("#wins");
@@ -51,13 +52,14 @@ $(document).ready(function() {
   var $placeholders = $("#placeholders");
   var $guessesLeft = $("#guessesLeft");
   var $lettersGuessed = $("#lettersGuessed");
-  var $newGameBtn = $("#newGame")
+  var $newGameBtn = $("#newGame");
 
   function newGame() {
     // Reset all game variables
     guessesLeft = 10;
     lettersGuessed.length = 0;
     pickedWordPlaceholders.length = 0;
+    gameRunning = true;
 
     // Pick a new word at random from wordBank
     pickedWord = wordBank[Math.floor(Math.random() * wordBank.length)];
@@ -75,10 +77,65 @@ $(document).ready(function() {
     // Write new values to the page to let user know a new game has started
     $lettersGuessed.text(lettersGuessed);
     $guessesLeft.text(guessesLeft);
-    $placeholders.text(pickedWordPlaceholders.join); // NOT PRINTING TO PAGE
+    $placeholders.text(pickedWordPlaceholders.join(""));
+  };
+  
+  // Run a function to see if the letter has been picked already
+  function letterGuessed(letter) {
+    // Check to see if letter has already been guessed
+    if (lettersGuessed.includes(letter)) {
+      alert(`You already guessed this letter!`);
+      return false;
+    };
+
+    // Add guessed letter to lettersGuessed bank
+    lettersGuessed.push(letter);
+    $lettersGuessed.text(letterGuessed.join(", "));
+
+    // Check to see if letter pressed is in the picked word. If yes, replace placeholder with correct letter
+    for (var i = 0; i < pickedWord.length; i++) {
+      if (pickedWord[i].toLowerCase() === letter.toLowerCase()) {
+        pickedWordPlaceholders[i] = pickedWord[i];
+      };
+    };
+
+    // Update placeholders on page
+    $placeholders.text(pickedWordPlaceholders.join(""));
+
+    // Check if letter guessed made it into our placeholders array. If not, decrement
+    if (!pickedWordPlaceholders.join("").toLowerCase().includes(letter)) {
+      guessesLeft--;
+      $guessesLeft.text(guessesLeft);
+    }
+
+    // Check for a loss
+    if (guessesLeft === 0) {
+      losses++;
+      $losses.text(losses);
+      gameRunning = false;
+    }
+
+    // Check for a win
+    if (pickedWordPlaceholders.join("").toLowerCase() === pickedWord.toLowerCase()) {
+      wins++;
+      $wins.text(wins);
+      gameRunning = false;
+    }
+
   };
 
-  
+  document.onkeyup = function(event) {
+    // Only run if key pressed is a letter
+    if (event.which >= 65 && event.which <= 90 && gameRunning) {
+      letterGuessed(event.key);
+    }
+
+    else {
+      alert(`You didn't press a letter.`);
+    };
+  };
+
+  $newGameBtn.on("click", newGame);
 
 // DON'T DELETE!!!
 });
